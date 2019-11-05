@@ -1,40 +1,29 @@
 #include <pybind11/pybind11.h>
 
-int add(int i, int j) {
-    return i + j;
-}
-
 namespace py = pybind11;
 
+class Person {
+public:
+  int a, b;
+  Person(int a_, int b_) : a(a_), b(b_) {}
+};
+
+class Gatto {
+public:
+  Person p1;
+  Gatto(const Person& p1_) : p1(p1_) {}
+};
+
 PYBIND11_MODULE(python_example, m) {
-    m.doc() = R"pbdoc(
-        Pybind11 example plugin
-        -----------------------
+  py::class_<Person>(m, "Person")
+      .def(py::init<int, int>())
+      .def_readwrite("a", &Person::a)
+      .def_readwrite("b", &Person::b);
 
-        .. currentmodule:: python_example
 
-        .. autosummary::
-           :toctree: _generate
+  py::class_<Gatto>(m, "Gatto")
+      .def(py::init<Person>())
+      .def_readwrite("p1", &Gatto::p1);
 
-           add
-           subtract
-    )pbdoc";
 
-    m.def("add", &add, R"pbdoc(
-        Add two numbers
-
-        Some other explanation about the add function.
-    )pbdoc");
-
-    m.def("subtract", [](int i, int j) { return i - j; }, R"pbdoc(
-        Subtract two numbers
-
-        Some other explanation about the subtract function.
-    )pbdoc");
-
-#ifdef VERSION_INFO
-    m.attr("__version__") = VERSION_INFO;
-#else
-    m.attr("__version__") = "dev";
-#endif
 }
