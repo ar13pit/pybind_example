@@ -14,6 +14,13 @@ public:
   Gatto(const Person& p1_) : p1(p1_) {}
 };
 
+class Beta {
+public:
+    Person* p1;
+    Beta(Person* p1_) : p1(p1_) {}
+};
+
+
 PYBIND11_MODULE(python_example, m) {
   py::class_<Person>(m, "Person")
       .def(py::init<int, int>())
@@ -23,7 +30,10 @@ PYBIND11_MODULE(python_example, m) {
 
   py::class_<Gatto>(m, "Gatto")
       .def(py::init<Person>())
-      .def_readwrite("p1", &Gatto::p1);
+      .def_readonly("p1", &Gatto::p1);
 
+  py::class_<Beta>(m, "Beta")
+      .def(py::init<Person *>())
+      .def_readwrite("p1", &Beta::p1);
 
 }
